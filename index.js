@@ -18,7 +18,7 @@ io.on('connection', (socket) => {
 		console.log('user disconnected')
 	});
 	socket.on('coord message', (x, y) => {
-		io.emit('coord message', socket.client.conn.id, x, y);
+		io.emit('coord message', [socket.client.conn.id, x, y]);
 	});
 });
 

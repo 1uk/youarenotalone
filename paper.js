@@ -16,7 +16,7 @@ window.onload = function() {
 	socket.on('coord message', function(msg) {
 		console.log(msg);
 		let client = clients.find(client => {
-			console.log("finding the client...", client);
+			console.log("finding the client with id: " + msg[0], client);
 			return client.clientId == msg[0];
 		});
 		console.log("found the client!", client);
