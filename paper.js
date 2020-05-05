@@ -1,4 +1,6 @@
 var paper = require('paper');
+var io = require('socket.io-client');
+var socket = io();
 
 // Only executed our code once the DOM is ready.
 	window.onload = function() {
@@ -11,8 +13,15 @@ var paper = require('paper');
 		// Give the stroke a color
 		path.strokeColor = 'black';
 		paper.view.onMouseMove = function(event) {
-		path.position = event.point;
+			//console.log(event.point);
+			socket.emit('coord message', event.point);
+			//path.position = event.point;
 		};
+		socket.on('coord message', function(msg) {
+			console.log(msg);
+			console.log(msg[1], msg[2]);
+			path.position = new paper.Point(msg[1], msg[2]);
+		});
 		// Draw the view now:
 		paper.view.draw();
 	}
