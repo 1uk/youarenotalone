@@ -1,3 +1,5 @@
+'use strict';
+
 var paper = require('paper');
 var io = require('socket.io-client');
 var socket = io();
@@ -15,12 +17,14 @@ window.onload = function() {
 	};
 	socket.on('coord message', function(msg) {
 		console.log(msg);
-		let client = clients.find(client => {
-			console.log("finding the client with id: " + msg[0], client);
-			return client.clientId == msg[0];
-		});
-		console.log("found the client!", client);
-		client.clientPath.position = new paper.Point(msg[1], msg[2]);
+		for client in clients {
+			client.clientPath.remove();
+		}
+		for coords in msg[1] {
+			var path = new paper.Path.Circle(new paper.Point(coords[0], coords[1]), 20);
+			path.strokeColor = 'black';
+		}
+
 	});
 	socket.on('connect message', function(id) {
 		var path = new paper.Path.Circle(new paper.Point(0, 0), 20);

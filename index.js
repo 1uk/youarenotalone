@@ -1,3 +1,5 @@
+'use strict';
+
 var paper = require('paper');
 var app = require('express')();
 var http = require('http').createServer(app);
@@ -11,17 +13,31 @@ app.get('/bundle.js', (req, res) => {
 });
 
 
+var globalClients = [];
+
 io.on('connection', (socket) => {
-	console.log(socket.client.conn.id);
+	let id = socket.client.conn.id;
+	globalClients.push({clientId: id, x: 0, y: 0});
 	io.emit('connect message', socket.client.conn.id);
 	socket.on('disconnect', () => {
 		console.log('user disconnected')
 		io.emit('disconnect message', socket.client.conn.id);
 	});
 	socket.on('coord message', (x, y) => {
-		io.emit('coord message', [socket.client.conn.id, x, y]);
+		let id = socket.client.conn.id;
+		globalClients = globalClients.map(client => {
+			if (client.clientId == id) {
+				client.x = x;
+				client.y = y;
+			}
+		});
+		io.emit('coord message', [globalClients, clientCoords(globalClients)]);
 	});
 });
+
+function clientCoords(clients) {
+	return clients.map(client => client = [x: client.x, y: client.y]);
+}
 
 http.listen(3000, () => {
 	console.log('listeing on *:3000');
