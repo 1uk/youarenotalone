@@ -22,10 +22,16 @@ window.onload = function() {
 		console.log("found the client!", client);
 		client.clientPath.position = new paper.Point(msg[1], msg[2]);
 	});
-	socket.on('user message', function(id) {
+	socket.on('connect message', function(id) {
 		var path = new paper.Path.Circle(new paper.Point(0, 0), 20);
 		path.strokeColor = 'black';
 		clients.push({clientId: id, clientPath: path});
+	});
+	socket.on('disconnect message', function(id) {
+		client = clients.find(client => client.clientId == id);
+		client.clientPath.remove();
+		clients = clients.filter(client => client.clientId != id);
+		console.log('user disconnected, deleting client:', clients);
 	});
 	// Draw the view now:
 	paper.view.draw();

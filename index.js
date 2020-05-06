@@ -13,9 +13,10 @@ app.get('/bundle.js', (req, res) => {
 
 io.on('connection', (socket) => {
 	console.log(socket.client.conn.id);
-	io.emit('user message', socket.client.conn.id);
+	io.emit('connect message', socket.client.conn.id);
 	socket.on('disconnect', () => {
 		console.log('user disconnected')
+		io.emit('disconnect message', socket.client.conn.id);
 	});
 	socket.on('coord message', (x, y) => {
 		io.emit('coord message', [socket.client.conn.id, x, y]);
