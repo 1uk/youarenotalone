@@ -18,10 +18,8 @@ var globalClients = [];
 io.on('connection', (socket) => {
 	let id = socket.client.conn.id;
 	globalClients.push({clientId: id, x: 0, y: 0});
-	io.emit('connect message', socket.client.conn.id);
 	socket.on('disconnect', () => {
 		console.log('user disconnected')
-		io.emit('disconnect message', socket.client.conn.id);
 	});
 	socket.on('coord message', (x, y) => {
 		let id = socket.client.conn.id;
@@ -30,14 +28,14 @@ io.on('connection', (socket) => {
 				client.x = x;
 				client.y = y;
 			}
+			return client;
 		});
-		io.emit('coord message', [globalClients, clientCoords(globalClients)]);
+		io.emit('coord message', globalClients.map(client => {
+			console.log('coord message emit', client);
+			return [client.x, client.y]
+		}));
 	});
 });
-
-function clientCoords(clients) {
-	return clients.map(client => client = [x: client.x, y: client.y]);
-}
 
 http.listen(3000, () => {
 	console.log('listeing on *:3000');
