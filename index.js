@@ -20,13 +20,7 @@ io.on('connection', (socket) => {
 	globalClients.push({clientId: id, x: 0, y: 0});
 	socket.on('disconnect', () => {
 		let id = socket.client.conn.id;
-		globalClients = globalClients.map(client => {
-			if (client.clientId == id) {
-				client.x = 0;
-				client.y = 0;
-			};
-			return client;
-		});
+		globalClients = globalClients.filter(client => client.clientId != id);
 		console.log('user disconnected')
 	});
 	socket.on('coord message', (x, y) => {
